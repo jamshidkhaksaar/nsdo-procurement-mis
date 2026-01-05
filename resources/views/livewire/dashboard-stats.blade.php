@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" wire:poll.5s>
     <!-- Total Assets -->
     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6 border-l-4 border-indigo-500 hover:shadow-md transition">
         <div class="flex items-center">

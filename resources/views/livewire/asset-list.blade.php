@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6" wire:poll.10s>
     <!-- Filter Card -->
     <div class="bg-white shadow-sm sm:rounded-lg p-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
