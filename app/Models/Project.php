@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Project extends Model
+class Project extends Model implements Auditable
 {
-    protected $fillable = ['name', 'project_code'];
+    use \OwenIt\Auditing\Auditable;
+
+    protected $fillable = ['name', 'description', 'start_date', 'end_date'];
 
     public function assets(): HasMany
     {

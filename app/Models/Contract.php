@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Contract extends Model
+class Contract extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     protected $fillable = [
         'vendor_name',
         'contract_reference',
