@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Asset;
 use App\Models\Project;
 use App\Models\AssetDocument;
+use App\Models\AssetType;
+use App\Models\Province;
+use App\Models\Department;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +19,7 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Asset::with('project');
+        $query = Asset::with(['project', 'creator', 'editor']);
 
         if ($request->filled('project_id')) {
             $query->where('project_id', $request->project_id);
@@ -43,7 +47,12 @@ class AssetController extends Controller
     public function create()
     {
         $projects = Project::all();
-        return view('assets.create', compact('projects'));
+        $assetTypes = AssetType::orderBy('name')->get();
+        $provinces = Province::orderBy('name')->get();
+        $departments = Department::orderBy('name')->get();
+        $staffMembers = Staff::orderBy('name')->get();
+        
+        return view('assets.create', compact('projects', 'assetTypes', 'provinces', 'departments', 'staffMembers'));
     }
 
     /**
@@ -53,11 +62,16 @@ class AssetController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
+            'asset_type_id' => 'nullable|exists:asset_types,id',
             'asset_tag' => 'required|string|unique:assets',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'quantity' => 'required|integer|min:1',
             'condition' => 'required|in:New,Good,Fair,Poor,Broken',
+            'province_id' => 'nullable|exists:provinces,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'staff_id' => 'nullable|exists:staff,id',
+            'room_number' => 'nullable|string|max:255',
             'location_province' => 'nullable|string',
             'location_department' => 'nullable|string',
             'handed_over_to' => 'nullable|string',
@@ -94,9 +108,14 @@ class AssetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Asset $asset)
+    public function show(Request $request, Asset $asset)
     {
-        $asset->load(['project', 'documents', 'audits.user']);
+        $asset->load(['project', 'documents', 'audits.user', 'assetType', 'province', 'department', 'staff', 'creator', 'editor']);
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json($asset);
+        }
+
         return view('assets.show', compact('asset'));
     }
 
@@ -106,7 +125,12 @@ class AssetController extends Controller
     public function edit(Asset $asset)
     {
         $projects = Project::all();
-        return view('assets.edit', compact('asset', 'projects'));
+        $assetTypes = AssetType::orderBy('name')->get();
+        $provinces = Province::orderBy('name')->get();
+        $departments = Department::orderBy('name')->get();
+        $staffMembers = Staff::orderBy('name')->get();
+
+        return view('assets.edit', compact('asset', 'projects', 'assetTypes', 'provinces', 'departments', 'staffMembers'));
     }
 
     /**
@@ -116,11 +140,16 @@ class AssetController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
+            'asset_type_id' => 'nullable|exists:asset_types,id',
             'asset_tag' => 'required|string|unique:assets,asset_tag,' . $asset->id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'quantity' => 'required|integer|min:1',
             'condition' => 'required|in:New,Good,Fair,Poor,Broken',
+            'province_id' => 'nullable|exists:provinces,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'staff_id' => 'nullable|exists:staff,id',
+            'room_number' => 'nullable|string|max:255',
             'location_province' => 'nullable|string',
             'location_department' => 'nullable|string',
             'handed_over_to' => 'nullable|string',
@@ -174,5 +203,72 @@ class AssetController extends Controller
 
         return redirect()->route('assets.index')
             ->with('success', 'Asset deleted successfully.');
+    }
+
+    public function roomList(Request $request)
+    {
+        $provinces = Province::all();
+        $departments = Department::all();
+        
+        // Get unique room numbers for the filter dropdown
+        $rooms = Asset::whereNotNull('room_number')->distinct()->pluck('room_number');
+
+        $query = Asset::with(['project', 'assetType', 'staff']);
+
+        if ($request->filled('province_id')) {
+            $query->where('province_id', $request->province_id);
+        }
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+        if ($request->filled('room_number')) {
+            $query->where('room_number', $request->room_number);
+        }
+
+        $assets = $query->get();
+
+        return view('assets.room-list', compact('assets', 'provinces', 'departments', 'rooms'));
+    }
+
+    public function exportRoomList(Request $request)
+    {
+        $query = Asset::with(['project', 'assetType', 'staff', 'province', 'department']);
+
+        if ($request->filled('province_id')) {
+            $query->where('province_id', $request->province_id);
+        }
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+        if ($request->filled('room_number')) {
+            $query->where('room_number', $request->room_number);
+        }
+
+        $assets = $query->get();
+        
+        $data = [
+            'assets' => $assets,
+            'prepared_by' => $request->prepared_by,
+            'approved_by' => $request->approved_by,
+            'date' => now()->format('Y-m-d'),
+            'room' => $request->room_number ?? 'All Rooms',
+            'province' => $request->filled('province_id') ? Province::find($request->province_id)->name : 'All',
+            'department' => $request->filled('department_id') ? Department::find($request->department_id)->name : 'All',
+        ];
+
+        if ($request->format == 'pdf') {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.room-list-pdf', $data);
+            return $pdf->download('Room_Asset_List_' . now()->format('Ymd') . '.pdf');
+        }
+
+        // Add Excel logic if needed, but the user emphasized PDF with signature
+        return back()->with('error', 'Excel format for room list is coming soon. Please use PDF.');
+    }
+
+    public function exportShowPdf(Asset $asset)
+    {
+        $asset->load(['project', 'documents', 'assetType', 'province', 'department', 'staff', 'creator', 'editor']);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.asset-detail-pdf', compact('asset'));
+        return $pdf->download('Asset_' . $asset->asset_tag . '.pdf');
     }
 }

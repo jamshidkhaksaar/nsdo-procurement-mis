@@ -83,3 +83,22 @@ php artisan test
 *   `composer.json`: PHP dependency management and project scripts.
 *   `package.json`: Node.js dependency management and frontend scripts.
 *   `vite.config.js`: Configuration for the Vite build tool.
+
+## Deployment Notes (cPanel)
+
+*   Legacy site `hr.nsdo.org.af` needs PHP 7.4. Add to `/home/nsdopqrj/hr.nsdo.org.af/.htaccess`:
+
+```apache
+# Set PHP 7.4
+<FilesMatch \.(php4|php5|php3|php2|php|phtml)$>
+    SetHandler application/x-httpd-alt-php74
+</FilesMatch>
+```
+
+*   New app `pr.nsdo.org.af` runs PHP 8.4. Ensure `public/.htaccess` includes the PHP 8.4 handler and root `.htaccess` rewrites to `public/`.
+*   Production `.env` was set to `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://pr.nsdo.org.af`, and MySQL credentials (DB `nsdopqrj_pr`, user `nsdopqrj_procurement`). Keep the password only in `.env`.
+*   App key: `php artisan key:generate --force`.
+*   DB setup: `php artisan migrate:fresh --force`. If you hit MySQL key length errors, add `Schema::defaultStringLength(191);` in `AppServiceProvider::boot()` and retry.
+*   Storage link: `php artisan storage:link`.
+*   Frontend build: `npm install && npm run build` (outputs to `public/build`).
+*   Admin user created: `it@nsdo.org.af` (password set during deployment).

@@ -3,6 +3,14 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\ContractAmendment;
+use App\Observers\ContractAmendmentObserver;
+use App\Models\Asset;
+use App\Observers\AssetObserver;
+use App\Models\Contract;
+use App\Observers\ContractObserver;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +27,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \App\Models\ContractAmendment::observe(\App\Observers\ContractAmendmentObserver::class);
+        ContractAmendment::observe(ContractAmendmentObserver::class);
+        Asset::observe(AssetObserver::class);
+        Contract::observe(ContractObserver::class);
+
+        Gate::define('isAdmin', function (User $user) {
+            return $user->isAdmin();
+        });
+
+        Gate::define('isManager', function (User $user) {
+            return $user->isManager() || $user->isAdmin();
+        });
     }
 }
