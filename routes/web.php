@@ -71,3 +71,14 @@ Route::get('/debug', function() {
         'user' => Auth::user(),
     ];
 });
+
+Route::get('/debug-smtp', function() {
+    try {
+        \Illuminate\Support\Facades\Mail::raw('SMTP test from Procurement MIS works!', function($m) {
+            $m->to('jamshid.khaksaar@gmail.com')->subject('SMTP Success - Procurement MIS');
+        });
+        return 'SUCCESS: Email sent to jamshid.khaksaar@gmail.com';
+    } catch (\Exception $e) {
+        return 'ERROR: ' . $e->getMessage();
+    }
+});
