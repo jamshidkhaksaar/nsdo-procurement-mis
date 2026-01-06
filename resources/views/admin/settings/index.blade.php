@@ -83,6 +83,47 @@
                     </div>
                 </div>
 
+                <hr class="my-6 border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Email & Notification Settings</h3>
+
+                <div class="mb-6">
+                    <label for="manager_notification_email" class="block text-sm font-medium text-gray-700">Manager Email for Notifications</label>
+                    <input type="email" name="manager_notification_email" id="manager_notification_email" value="{{ $settings['manager_notification_email'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="manager@nsdo.org.af">
+                    <p class="text-xs text-gray-500 mt-1">This email will receive alerts when reports are exported.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="mail_host" class="block text-sm font-medium text-gray-700">SMTP Host</label>
+                        <input type="text" name="mail_host" id="mail_host" value="{{ $settings['mail_host'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="smtp.gmail.com">
+                    </div>
+                    <div>
+                        <label for="mail_port" class="block text-sm font-medium text-gray-700">SMTP Port</label>
+                        <input type="text" name="mail_port" id="mail_port" value="{{ $settings['mail_port'] ?? '587' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="mail_username" class="block text-sm font-medium text-gray-700">SMTP Username</label>
+                        <input type="text" name="mail_username" id="mail_username" value="{{ $settings['mail_username'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="mail_password" class="block text-sm font-medium text-gray-700">SMTP Password</label>
+                        <input type="password" name="mail_password" id="mail_password" value="{{ $settings['mail_password'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="mail_encryption" class="block text-sm font-medium text-gray-700">Encryption (tls/ssl)</label>
+                        <input type="text" name="mail_encryption" id="mail_encryption" value="{{ $settings['mail_encryption'] ?? 'tls' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="mail_from_address" class="block text-sm font-medium text-gray-700">From Email Address</label>
+                        <input type="email" name="mail_from_address" id="mail_from_address" value="{{ $settings['mail_from_address'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="mail_from_name" class="block text-sm font-medium text-gray-700">From Name</label>
+                    <input type="text" name="mail_from_name" id="mail_from_name" value="{{ $settings['mail_from_name'] ?? 'Procurement MIS' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+
                 <div class="flex items-center justify-end">
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm transition">
                         Save Settings

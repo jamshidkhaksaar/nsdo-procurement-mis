@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserWelcomeMail;
 
 class UserController extends Controller
 {
@@ -39,12 +41,19 @@ class UserController extends Controller
             'role' => ['required', 'string', 'in:admin,manager,user'],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
+
+        try {
+            Mail::to($user->email)->send(new UserWelcomeMail($user, $request->password));
+        } catch (\Exception $e) {
+            // Log error but continue
+            report($e);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }

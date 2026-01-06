@@ -8,6 +8,10 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReportNotificationMail;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -20,6 +24,10 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         $filename = 'assets_report_' . date('Y-m-d_H-i') . '.xlsx';
+        
+        // Notify Manager
+        $this->notifyManager('Excel Asset Report', $filename);
+
         return Excel::download(new AssetExport($request->project_id, $request->condition), $filename);
     }
 
@@ -41,11 +49,28 @@ class ReportController extends Controller
             'condition' => $request->condition ?? 'All Conditions',
         ];
 
+        $filename = 'assets_report_' . date('Y-m-d_H-i') . '.pdf';
+        
+        // Notify Manager
+        $this->notifyManager('PDF Asset Report', $filename);
+
         $pdf = Pdf::loadView('reports.pdf', compact('assets', 'filters'));
         
         // Optional: Set paper size and orientation
         $pdf->setPaper('a4', 'landscape');
 
-        return $pdf->download('assets_report_' . date('Y-m-d_H-i') . '.pdf');
+        return $pdf->download($filename);
+    }
+
+    protected function notifyManager($type, $filename)
+    {
+        $notifyEmail = Setting::get('manager_notification_email');
+        if ($notifyEmail) {
+            try {
+                Mail::to($notifyEmail)->send(new ReportNotificationMail(Auth::user(), $type, $filename));
+            } catch (\Exception $e) {
+                report($e);
+            }
+        }
     }
 }

@@ -24,10 +24,29 @@ class SettingController extends Controller
             'announcement_title' => 'nullable|string|max:255',
             'announcement_body' => 'nullable|string',
             'announcement_version' => 'nullable|string|max:10',
+            'manager_notification_email' => 'nullable|email|max:255',
+            'mail_host' => 'nullable|string|max:255',
+            'mail_port' => 'nullable|string|max:10',
+            'mail_username' => 'nullable|string|max:255',
+            'mail_password' => 'nullable|string|max:255',
+            'mail_encryption' => 'nullable|string|max:10',
+            'mail_from_address' => 'nullable|email|max:255',
+            'mail_from_name' => 'nullable|string|max:255',
         ]);
 
         if ($request->has('company_name')) {
             Setting::set('company_name', $request->company_name);
+        }
+        
+        if ($request->has('manager_notification_email')) {
+            Setting::set('manager_notification_email', $request->manager_notification_email);
+        }
+
+        // Handle SMTP Settings
+        foreach (['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_address', 'mail_from_name'] as $field) {
+            if ($request->has($field)) {
+                Setting::set($field, $request->$field);
+            }
         }
         
         // Handle Announcement Settings
