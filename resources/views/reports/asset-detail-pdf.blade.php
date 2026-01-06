@@ -113,7 +113,7 @@
                 <td class="value" style="border: none;">{{ $asset->handover_date ? $asset->handover_date->format('Y-m-d') : 'N/A' }}</td>
             </tr>
             <tr>
-                <td class="label" style="border: none;">Received By (Staff):</td>
+                <td class="label" style="border: none;">Handedover to:</td>
                 <td class="value" style="border: none;">{{ $asset->staff->name ?? $asset->handed_over_to ?? 'N/A' }}</td>
             </tr>
         </table>

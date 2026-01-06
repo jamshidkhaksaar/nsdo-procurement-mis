@@ -82,7 +82,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tag</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Asset Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned To</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Handedover to</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Condition</th>
                     </tr>
                 </thead>

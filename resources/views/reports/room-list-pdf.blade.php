@@ -58,7 +58,7 @@
                 <th width="15%">Asset Tag</th>
                 <th width="30%">Asset Name / Description</th>
                 <th width="15%">Type</th>
-                <th width="20%">Assigned To</th>
+                <th width="20%">Handedover to</th>
                 <th width="10%">Qty</th>
                 <th width="10%">Condition</th>
             </tr>

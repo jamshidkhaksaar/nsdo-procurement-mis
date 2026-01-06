@@ -83,7 +83,7 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Assigned To (Staff)</label>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handedover to</label>
                                     <p class="text-indigo-700 font-bold text-lg">{{ $asset->staff->name ?? $asset->handed_over_to ?? 'Not Assigned' }}</p>
                                 </div>
                                 <div>
