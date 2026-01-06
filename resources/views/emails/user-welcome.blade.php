@@ -21,6 +21,7 @@
             <ul>
                 <li><strong>Email:</strong> {{ $user->email }}</li>
                 <li><strong>Password:</strong> {{ $password }}</li>
+                <li><strong>Assigned Role:</strong> {{ ucfirst($user->role) }}</li>
             </ul>
             <p>Please log in at: <a href="{{ config('app.url') }}">{{ config('app.url') }}</a></p>
             <p>We recommend changing your password after your first login.</p>
