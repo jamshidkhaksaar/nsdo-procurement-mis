@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Procurement MIS') }}</title>
+    @php
+        $siteTitle = \App\Models\Setting::get('company_name', config('app.name', 'Procurement MIS'));
+        $siteFavicon = \App\Models\Setting::get('site_favicon');
+    @endphp
+    <title>{{ $siteTitle }}</title>
+    @if($siteFavicon)
+        <link rel="icon" href="{{ Storage::url($siteFavicon) }}">
+    @endif
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

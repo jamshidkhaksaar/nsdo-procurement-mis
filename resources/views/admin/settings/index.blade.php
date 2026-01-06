@@ -34,6 +34,27 @@
                     <p class="text-xs text-gray-500 mt-1">Recommended size: 200x50px. Max 2MB.</p>
                 </div>
 
+                <hr class="my-6 border-gray-200">
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Current Favicon</label>
+                    <div class="mt-2 flex items-center">
+                        @if(isset($settings['site_favicon']))
+                            <img src="{{ Storage::url($settings['site_favicon']) }}" alt="Site Favicon" class="h-8 w-8 object-contain border p-1 rounded">
+                        @else
+                            <div class="h-8 w-8 bg-gray-100 flex items-center justify-center text-xs text-gray-400 border rounded">
+                                None
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="site_favicon" class="block text-sm font-medium text-gray-700">Upload New Favicon</label>
+                    <input type="file" name="site_favicon" id="site_favicon" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="text-xs text-gray-500 mt-1">Recommended size: 32x32px or 16x16px (PNG/ICO). Max 1MB.</p>
+                </div>
+
                 <div class="flex items-center justify-end">
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm transition">
                         Save Settings
