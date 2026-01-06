@@ -97,15 +97,30 @@
 
     <!-- View Modal (Pure Livewire) -->
     @if($showModal && $selectedAsset)
-        <div class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div x-data="{ open: false }" x-init="setTimeout(() => open = true, 10)"
+             class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <!-- Glassy Backdrop -->
-                <div class="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
+                <!-- Strong Glassy Backdrop -->
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm" aria-hidden="true" wire:click="closeModal"></div>
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <!-- Modal Panel -->
-                <div class="relative z-[110] inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="relative z-[110] inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full border border-gray-200">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
@@ -118,8 +133,20 @@
                                     </button>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                                    <div class="space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                                    <!-- Photo Column -->
+                                    <div class="col-span-1 flex items-center justify-center bg-gray-50 rounded-lg p-2 border">
+                                        @if($selectedAsset->photo_path)
+                                            <img src="{{ Storage::url($selectedAsset->photo_path) }}" alt="Asset Photo" class="max-h-64 w-full object-contain rounded-md shadow-sm">
+                                        @else
+                                            <div class="text-gray-400 flex flex-col items-center py-10">
+                                                <svg class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                <p class="text-xs mt-2">No Image Available</p>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="space-y-4">
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-semibold">Asset Name</p>
                                             <p class="text-lg text-gray-900">{{ $selectedAsset->name }}</p>
@@ -138,7 +165,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="space-y-3 border-l pl-6">
+                                    <div class="space-y-4 border-l pl-6">
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-semibold">Location</p>
                                             <p class="text-gray-900">
@@ -160,7 +187,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-span-2 pt-4 border-t">
+                                    <div class="col-span-3 pt-4 border-t mt-2">
                                         <p class="text-gray-500 text-xs uppercase font-semibold mb-1">Description / Specifications</p>
                                         <p class="text-gray-700 bg-gray-50 p-3 rounded italic">{{ $selectedAsset->description ?: 'No description provided.' }}</p>
                                     </div>
