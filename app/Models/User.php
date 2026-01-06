@@ -23,6 +23,7 @@ class User extends Authenticatable implements Auditable
         'email',
         'password',
         'role',
+        'force_password_change',
     ];
 
     /**

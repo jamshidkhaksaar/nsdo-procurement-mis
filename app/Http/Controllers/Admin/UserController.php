@@ -46,6 +46,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'force_password_change' => true,
         ]);
 
         try {
