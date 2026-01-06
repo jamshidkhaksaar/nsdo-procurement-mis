@@ -46,7 +46,7 @@
                                                 @if(isset($modified['old']))
                                                     <span class="text-red-500 line-through">{{ Str::limit($modified['old'], 20) }}</span> ->
                                                 @endif
-                                                <span class="text-green-600">{{ Str::limit($modified['new'], 20) }}</span>
+                                                <span class="text-green-600">{{ Str::limit($modified['new'] ?? 'N/A', 20) }}</span>
                                             </div>
                                         @endforeach
                                     </div>
