@@ -19,12 +19,28 @@ class SettingController extends Controller
     {
         $request->validate([
             'company_name' => 'nullable|string|max:255',
-            'company_logo' => 'nullable|image|max:2048', // 2MB Max
-            'site_favicon' => 'nullable|image|max:1024', // 1MB Max (Favicons are small)
+            'company_logo' => 'nullable|image|max:2048',
+            'site_favicon' => 'nullable|image|max:1024',
+            'announcement_title' => 'nullable|string|max:255',
+            'announcement_body' => 'nullable|string',
+            'announcement_version' => 'nullable|string|max:10',
         ]);
 
         if ($request->has('company_name')) {
             Setting::set('company_name', $request->company_name);
+        }
+        
+        // Handle Announcement Settings
+        Setting::set('show_announcement', $request->has('show_announcement'));
+        
+        if ($request->has('announcement_title')) {
+            Setting::set('announcement_title', $request->announcement_title);
+        }
+        if ($request->has('announcement_body')) {
+            Setting::set('announcement_body', $request->announcement_body);
+        }
+        if ($request->has('announcement_version')) {
+            Setting::set('announcement_version', $request->announcement_version);
         }
 
         if ($request->hasFile('company_logo')) {

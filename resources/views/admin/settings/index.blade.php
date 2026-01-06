@@ -55,6 +55,34 @@
                     <p class="text-xs text-gray-500 mt-1">Recommended size: 32x32px or 16x16px (PNG/ICO). Max 1MB.</p>
                 </div>
 
+                <hr class="my-6 border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">System Announcement</h3>
+
+                <div class="mb-4">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="show_announcement" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" {{ isset($settings['show_announcement']) && $settings['show_announcement'] ? 'checked' : '' }}>
+                        <span class="ml-2 text-sm text-gray-600">Show Announcement Modal on Login</span>
+                    </label>
+                </div>
+
+                <div class="mb-4">
+                    <label for="announcement_title" class="block text-sm font-medium text-gray-700">Announcement Title</label>
+                    <input type="text" name="announcement_title" id="announcement_title" value="{{ $settings['announcement_title'] ?? 'Welcome to Procurement MIS' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+
+                <div class="mb-4">
+                    <label for="announcement_body" class="block text-sm font-medium text-gray-700">Announcement Body (HTML supported)</label>
+                    <textarea name="announcement_body" id="announcement_body" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ $settings['announcement_body'] ?? '' }}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="announcement_version" class="block text-sm font-medium text-gray-700">Announcement Version</label>
+                    <div class="flex items-center">
+                        <input type="text" name="announcement_version" id="announcement_version" value="{{ $settings['announcement_version'] ?? '1.0' }}" class="mt-1 block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <span class="ml-3 text-xs text-gray-500">Change this number (e.g., 1.1) to force the modal to appear again for all users.</span>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-end">
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm transition">
                         Save Settings
