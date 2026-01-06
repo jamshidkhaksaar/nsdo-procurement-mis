@@ -98,111 +98,26 @@
     @php
         $showAnnouncement = \App\Models\Setting::get('show_announcement', true);
         $announcementTitle = \App\Models\Setting::get('announcement_title', '🚀 Welcome to Procurement MIS v1.0');
-        $announcementBody = \App\Models\Setting::get('announcement_body', "
-            <ul class='list-disc list-inside space-y-2 text-gray-600'>
-                <li><strong>Secure Access:</strong> Dedicated roles for Admins, Managers, and Users.</li>
-                <li><strong>Asset Tracking:</strong> Full lifecycle management, history, and 'Mark as Damaged' features.</li>
-                <li><strong>Smart Reports:</strong> Generate PDF exports for Room Lists and Asset Details with signatures.</li>
-                <li><strong>Contract Alerts:</strong> Track vendor contracts with automatic expiration warnings.</li>
-                <li><strong>Real-Time Dashboard:</strong> Live updates on assets and activities without refreshing.</li>
-                <li><strong>Manager Hub:</strong> Centralized control for Departments, Staff, and Locations.</li>
-            </ul>
-        ");
+        $announcementBody = \App\Models\Setting::get('announcement_body', '');
         $announcementVersion = \App\Models\Setting::get('announcement_version', '1.0');
     @endphp
 
-                    @if($showAnnouncement)
-
-                    <div wire:key="announcement-modal"
-
-                         x-data="{ open: false }" 
-
-                         x-init="$nextTick(() => open = true)"
-
-                         x-show="open"
-
-                         class="fixed inset-0 z-[100] overflow-y-auto" 
-
-                         style="display: none;"
-
-                         aria-labelledby="modal-title" 
-
-                         role="dialog" 
-
-                         aria-modal="true">
-
-                        
-
-                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-
-                            <!-- Strong Glassy Backdrop -->
-
-                            <div x-show="open" 
-
-                                 x-transition:enter="transition ease-out duration-300"
-
-                                 x-transition:enter-start="opacity-0" 
-
-                                 x-transition:enter-end="opacity-100"
-
-                                 x-transition:leave="transition ease-in duration-200" 
-
-                                 x-transition:leave-start="opacity-100" 
-
-                                 x-transition:leave-end="opacity-0"
-
-                                 class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" 
-
-                                 @click="open = false"
-
-                                 aria-hidden="true"></div>
-
-                
-
-                            <!-- Modal panel -->
-
-                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                            
-
-                            <div x-show="open" 
-
-                                 x-transition:enter="transition ease-out duration-300"
-
-                                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-
-                                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-
-                                 x-transition:leave="transition ease-in duration-200" 
-
-                                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-
-                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-
-                                 class="relative z-[110] inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-200">                
+    @if($showAnnouncement)
+    <div x-data="{ open: false }" x-init="if (localStorage.getItem('dismissed_announcement') !== '{{ $announcementVersion }}') { open = true; }" x-show="open" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-black bg-opacity-75 transition-opacity" @click="open = false"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="relative z-[110] inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg w-full border border-gray-200">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <svg class="h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                            </svg>
-                        </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                {{ $announcementTitle }}
-                            </h3>
-                            <div class="mt-2">
-                                <div class="text-sm text-gray-500">
-                                    {!! $announcementBody !!}
-                                </div>
-                            </div>
+                            <h3 class="text-xl leading-6 font-bold text-gray-900">{{ $announcementTitle }}</h3>
+                            <div class="mt-4 text-sm text-gray-500">{!! $announcementBody !!}</div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" 
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-                            @click="open = false; localStorage.setItem('dismissed_announcement', version)">
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
+                    <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm" @click="open = false; localStorage.setItem('dismissed_announcement', '{{ $announcementVersion }}')">
                         Got it, thanks!
                     </button>
                 </div>
