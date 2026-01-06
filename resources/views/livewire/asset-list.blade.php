@@ -73,13 +73,19 @@
                                 {{ $asset->creator->name ?? 'System' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                <button wire:click="viewAsset({{ $asset->id }})" class="text-blue-600 hover:text-blue-900">View</button>
+                                <button type="button" wire:click="viewAsset({{ $asset->id }})" class="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-100">
+                                    View
+                                </button>
                                 
                                 @can('isAdmin')
-                                    <a href="{{ route('admin.audits.index', ['model_type' => 'App\Models\Asset', 'model_id' => $asset->id]) }}" class="text-gray-600 hover:text-gray-900">Audit</a>
+                                    <a href="{{ route('admin.audits.index', ['model_type' => 'App\Models\Asset', 'model_id' => $asset->id]) }}" class="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-100">
+                                        Audit
+                                    </a>
                                 @endcan
 
-                                <a href="{{ route('assets.edit', $asset) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                <a href="{{ route('assets.edit', $asset) }}" class="inline-flex items-center rounded-md border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 hover:bg-indigo-100">
+                                    Edit
+                                </a>
                             </td>
                         </tr>
                     @empty
@@ -175,11 +181,11 @@
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Type</p>
-                                            <p class="text-gray-900 font-medium">{{ $selectedAsset->assetType->name ?? 'N/A' }}</p>
+                                            <p class="text-gray-900 font-medium">{{ $selectedAsset->assetType?->name ?? 'N/A' }}</p>
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Project</p>
-                                            <p class="text-gray-900 font-medium">{{ $selectedAsset->project->name ?? 'N/A' }}</p>
+                                            <p class="text-gray-900 font-medium">{{ $selectedAsset->project?->name ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                     
@@ -187,8 +193,8 @@
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Location</p>
                                             <p class="text-gray-900 font-medium">
-                                                {{ $selectedAsset->province->name ?? $selectedAsset->location_province ?? 'N/A' }} / 
-                                                {{ $selectedAsset->department->name ?? $selectedAsset->location_department ?? 'N/A' }}
+                                                {{ $selectedAsset->province?->name ?? $selectedAsset->location_province ?? 'N/A' }} / 
+                                                {{ $selectedAsset->department?->name ?? $selectedAsset->location_department ?? 'N/A' }}
                                             </p>
                                         </div>
                                         <div>
@@ -197,7 +203,7 @@
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Assigned To</p>
-                                            <p class="text-gray-900 font-bold text-indigo-700">{{ $selectedAsset->staff->name ?? $selectedAsset->handed_over_to ?? 'N/A' }}</p>
+                                            <p class="text-gray-900 font-bold text-indigo-700">{{ $selectedAsset->staff?->name ?? $selectedAsset->handed_over_to ?? 'N/A' }}</p>
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Handed Over By</p>
@@ -218,18 +224,6 @@
                             Export PDF / Print
                         </a>
                         <button type="button" wire:click="closeModal" class="inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition sm:w-auto sm:text-sm">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-row-reverse space-x-reverse space-x-3">
-                        <a href="{{ route('assets.export-pdf', $selectedAsset) }}" class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:w-auto sm:text-sm">
-                            Export PDF / Print
-                        </a>
-                        <button type="button" wire:click="closeModal" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm">
                             Close
                         </button>
                     </div>
