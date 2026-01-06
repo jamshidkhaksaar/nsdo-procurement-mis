@@ -50,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
                         'mail.mailers.smtp.username' => \App\Models\Setting::get('mail_username'),
                         'mail.mailers.smtp.password' => \App\Models\Setting::get('mail_password'),
                         'mail.mailers.smtp.encryption' => \App\Models\Setting::get('mail_encryption', 'tls'),
+                        'mail.mailers.smtp.verify_peer' => false,
                         'mail.from.address' => \App\Models\Setting::get('mail_from_address'),
                         'mail.from.name' => \App\Models\Setting::get('mail_from_name', 'Procurement MIS'),
                     ]);
