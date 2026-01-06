@@ -102,15 +102,35 @@
     </div>
 
     <div class="section">
-        <div class="section-title">System Record</div>
-        <table>
+        <div class="section-title">Handover Details</div>
+        <table style="border: none;">
             <tr>
-                <td class="label">Added By:</td>
-                <td class="value">{{ $asset->creator->name ?? 'System' }} ({{ $asset->created_at->format('Y-m-d') }})</td>
+                <td class="label" style="border: none;">Handed Over By:</td>
+                <td class="value" style="border: none;">{{ $asset->handed_over_by ?? 'Logistics Officer' }}</td>
             </tr>
             <tr>
-                <td class="label">Last Modified By:</td>
-                <td class="value">{{ $asset->editor->name ?? 'N/A' }} ({{ $asset->updated_at->format('Y-m-d') }})</td>
+                <td class="label" style="border: none;">Received By:</td>
+                <td class="value" style="border: none;">{{ $asset->staff->name ?? $asset->handed_over_to ?? 'N/A' }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="width: 45%; border: none; text-align: center; padding-top: 20px;">
+                    <div style="border-top: 1px solid #000; padding-top: 5px;">
+                        <strong>Handed Over By</strong><br>
+                        <span style="font-size: 10px;">(Signature & Date)</span>
+                    </div>
+                </td>
+                <td style="width: 10%; border: none;"></td>
+                <td style="width: 45%; border: none; text-align: center; padding-top: 20px;">
+                    <div style="border-top: 1px solid #000; padding-top: 5px;">
+                        <strong>Received By</strong><br>
+                        <span style="font-size: 10px;">(Signature & Date)</span>
+                    </div>
+                </td>
             </tr>
         </table>
     </div>
