@@ -271,4 +271,10 @@ class AssetController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.asset-detail-pdf', compact('asset'));
         return $pdf->download('Asset_' . $asset->asset_tag . '.pdf');
     }
+
+    public function markDamaged(Asset $asset)
+    {
+        $asset->update(['condition' => 'Broken']);
+        return back()->with('success', 'Asset marked as Damaged (Broken).');
+    }
 }

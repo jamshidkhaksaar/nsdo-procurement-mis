@@ -41,11 +41,11 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tag</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Asset Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Condition</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Added By</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tag</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added By</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -70,16 +70,29 @@
                             <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                                 {{ $asset->creator->name ?? 'System' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                <button type="button" wire:click="viewAsset({{ $asset->id }})" class="text-blue-600 hover:text-blue-900 font-bold">View</button>
-                                @can('isAdmin')
-                                    <a href="{{ route('admin.audits.index', ['model_type' => 'App\Models\Asset', 'model_id' => $asset->id]) }}" class="text-gray-600 hover:text-gray-900">Audit</a>
-                                @endcan
-                                <a href="{{ route('assets.edit', $asset) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                <div class="flex justify-end items-center space-x-3">
+                                    <a href="{{ route('assets.show', $asset) }}" target="_blank" class="text-blue-600 hover:text-blue-900 font-bold">View</a>
+                                    
+                                    @if($asset->condition !== 'Broken')
+                                        <form action="{{ route('assets.mark-damaged', $asset) }}" method="POST" onsubmit="return confirm('Mark as broken?')">
+                                            @csrf
+                                            <button type="submit" class="text-red-600 hover:text-red-900 font-bold">Damage</button>
+                                        </form>
+                                    @endif
+
+                                    @can('isAdmin')
+                                        <a href="{{ route('admin.audits.index', ['model_type' => 'App\Models\Asset', 'model_id' => $asset->id]) }}" class="text-gray-600 hover:text-gray-900">Audit</a>
+                                    @endcan
+
+                                    <a href="{{ route('assets.edit', $asset) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">No assets found.</td></tr>
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-500 italic">No assets found matching your criteria.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -88,97 +101,4 @@
             {{ $assets->links() }}
         </div>
     </div>
-
-    <!-- View Modal (Simplified for Reliability) -->
-    @if($showModal && $selectedAsset)
-        <div class="fixed inset-0 z-[100] overflow-y-auto" role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 text-center sm:block sm:p-0">
-                <!-- Backdrop -->
-                <div class="fixed inset-0 bg-black bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
-
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <!-- Modal Panel -->
-                <div class="relative z-[110] inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full border border-gray-200">
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div class="flex justify-between items-center border-b pb-3 mb-4">
-                            <h3 class="text-xl font-bold text-gray-900">
-                                Asset Details: {{ $selectedAsset->asset_tag }}
-                            </h3>
-                            <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-gray-500">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                            <!-- Photo Column -->
-                            <div class="col-span-1 flex items-center justify-center bg-gray-50 rounded-lg p-2 border border-gray-100">
-                                @if($selectedAsset->photo_path)
-                                    <img src="{{ Storage::url($selectedAsset->photo_path) }}" alt="Asset Photo" class="max-h-64 w-full object-contain rounded-md shadow-sm">
-                                @else
-                                    <div class="text-gray-400 flex flex-col items-center py-12">
-                                        <svg class="h-16 w-16 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        <p class="text-xs mt-2 font-medium">No Image</p>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Asset Name</p>
-                                    <p class="text-lg text-gray-900 font-semibold">{{ $selectedAsset->name }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Condition</p>
-                                    <p class="text-gray-900">{{ $selectedAsset->condition }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Type</p>
-                                    <p class="text-gray-900">{{ $selectedAsset->assetType?->name ?? 'N/A' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Project</p>
-                                    <p class="text-gray-900">{{ $selectedAsset->project?->name ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4 border-l pl-6">
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Location</p>
-                                    <p class="text-gray-900">
-                                        {{ $selectedAsset->province?->name ?? 'N/A' }} / {{ $selectedAsset->department?->name ?? 'N/A' }}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Room</p>
-                                    <p class="text-gray-900">{{ $selectedAsset->room_number ?? 'N/A' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Assigned To</p>
-                                    <p class="text-gray-900 font-bold text-indigo-700">{{ $selectedAsset->staff?->name ?? 'N/A' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 text-xs uppercase font-bold tracking-wider">Handed Over By</p>
-                                    <p class="text-gray-900">{{ $selectedAsset->handed_over_by ?? 'Logistics' }}</p>
-                                </div>
-                            </div>
-
-                            <div class="col-span-3 pt-4 border-t mt-2">
-                                <p class="text-gray-500 text-xs uppercase font-bold tracking-wider mb-1">Description</p>
-                                <p class="text-gray-700 bg-gray-50 p-3 rounded-lg italic">{{ $selectedAsset->description ?: 'No description.' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-row-reverse space-x-reverse space-x-3 border-t">
-                        <a href="{{ route('assets.export-pdf', $selectedAsset) }}" class="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:w-auto sm:text-sm">
-                            Export PDF
-                        </a>
-                        <button type="button" wire:click="closeModal" class="inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 </div>

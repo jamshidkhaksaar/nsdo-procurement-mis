@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('projects', ProjectController::class);
     Route::resource('assets', AssetController::class);
+    Route::post('assets/{asset}/mark-damaged', [AssetController::class, 'markDamaged'])->name('assets.mark-damaged');
     Route::get('assets-room-list', [AssetController::class, 'roomList'])->name('assets.room-list');
     Route::get('assets-room-list/export', [AssetController::class, 'exportRoomList'])->name('assets.room-list.export');
     Route::get('assets/{asset}/export-pdf', [AssetController::class, 'exportShowPdf'])->name('assets.export-pdf');
