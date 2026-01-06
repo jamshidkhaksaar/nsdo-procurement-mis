@@ -21,6 +21,15 @@
                 </div>
 
                 <div class="mb-4">
+                    <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                    <select name="role" id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                        <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User</option>
+                        <option value="manager" {{ old('role', $user->role) == 'manager' ? 'selected' : '' }}>Manager</option>
+                        <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Administrator</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">New Password (Optional)</label>
                     <input type="password" name="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     <p class="text-xs text-gray-500 mt-1">Leave blank to keep the current password.</p>

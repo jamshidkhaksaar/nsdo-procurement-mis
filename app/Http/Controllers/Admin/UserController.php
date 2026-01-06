@@ -36,12 +36,14 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:admin,manager,user'],
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -63,6 +65,7 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user->id],
+            'role' => ['required', 'string', 'in:admin,manager,user'],
         ]);
 
         if ($request->filled('password')) {
@@ -74,6 +77,7 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->role = $request->role;
         $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
