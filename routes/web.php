@@ -64,26 +64,3 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Temporary debug route
-Route::get('/debug', function() {
-    return [
-        'auth_status' => Auth::check(),
-        'user' => Auth::user(),
-    ];
-});
-
-Route::get('/debug-smtp', function() {
-    try {
-        $user = \App\Models\User::first();
-        
-        // Test 1: Welcome Email
-        \Illuminate\Support\Facades\Mail::to('jamshid.khaksaar@gmail.com')->send(new \App\Mail\UserWelcomeMail($user, 'password123'));
-
-        // Test 2: Report Notification
-        \Illuminate\Support\Facades\Mail::to('jamshid.khaksaar@gmail.com')->send(new \App\Mail\ReportNotificationMail($user, 'PDF Asset Report', 'asset_report.pdf'));
-
-        return 'SUCCESS: Welcome Email and Report Notification sent to jamshid.khaksaar@gmail.com';
-    } catch (\Exception $e) {
-        return 'ERROR: ' . $e->getMessage();
-    }
-});
