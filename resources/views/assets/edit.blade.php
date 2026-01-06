@@ -119,6 +119,17 @@
                             </select>
                         </div>
 
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="assigned_by" class="block text-sm font-medium text-gray-700">Assigned By (Whom)</label>
+                                <input type="text" name="assigned_by" id="assigned_by" value="{{ old('assigned_by', $asset->assigned_by) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="assigned_date" class="block text-sm font-medium text-gray-700">Assigned Date</label>
+                                <input type="date" name="assigned_date" id="assigned_date" value="{{ old('assigned_date', $asset->assigned_date ? $asset->assigned_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
                         <div>
                             <label for="photo" class="block text-sm font-medium text-gray-700">Change Asset Photo</label>
                             <input type="file" name="photo" id="photo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">

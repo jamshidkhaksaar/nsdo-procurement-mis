@@ -91,6 +91,11 @@
                                     <p class="text-gray-900 font-medium italic">Handed over by: {{ $asset->handed_over_by ?? 'Logistics' }}</p>
                                 </div>
                                 <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Assignment Record</label>
+                                    <p class="text-gray-900 font-medium">Assigned by: {{ $asset->assigned_by ?? 'N/A' }}</p>
+                                    <p class="text-gray-500 text-xs mt-1">Date: {{ $asset->assigned_date ? $asset->assigned_date->format('M d, Y') : 'N/A' }}</p>
+                                </div>
+                                <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Current Location</label>
                                     <p class="text-gray-900 font-medium">
                                         {{ $asset->province->name ?? $asset->location_province ?? 'N/A' }} / 

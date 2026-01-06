@@ -27,6 +27,8 @@ class Asset extends Model implements Auditable
         'location_department',
         'handed_over_to',
         'handed_over_by',
+        'assigned_by',
+        'assigned_date',
         'photo_path',
         'created_by',
         'updated_by'
@@ -71,4 +73,8 @@ class Asset extends Model implements Auditable
     {
         return $this->hasMany(AssetDocument::class);
     }
+
+    protected $casts = [
+        'assigned_date' => 'date',
+    ];
 }
