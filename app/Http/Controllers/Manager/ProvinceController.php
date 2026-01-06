@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 use App\Models\Province;
 use Illuminate\Http\Request;
+use App\Traits\NotifiesUsers;
 
 class ProvinceController extends Controller
 {
+    use NotifiesUsers;
+
     public function index()
     {
         $provinces = Province::orderBy('name')->get();
@@ -20,7 +23,8 @@ class ProvinceController extends Controller
             'name' => 'required|string|max:255|unique:provinces',
         ]);
 
-        Province::create($validated);
+        $province = Province::create($validated);
+        $this->notifyAllUsers('New Province/Location', $province->name);
 
         return redirect()->route('manager.provinces.index')->with('success', 'Province added successfully.');
     }

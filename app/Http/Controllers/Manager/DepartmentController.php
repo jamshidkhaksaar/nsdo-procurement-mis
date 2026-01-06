@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Traits\NotifiesUsers;
 
 class DepartmentController extends Controller
 {
+    use NotifiesUsers;
+
     public function index()
     {
         $departments = Department::orderBy('name')->get();
@@ -20,7 +23,8 @@ class DepartmentController extends Controller
             'name' => 'required|string|max:255|unique:departments',
         ]);
 
-        Department::create($validated);
+        $department = Department::create($validated);
+        $this->notifyAllUsers('New Department', $department->name);
 
         return redirect()->route('manager.departments.index')->with('success', 'Department added successfully.');
     }

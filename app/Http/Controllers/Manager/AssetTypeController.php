@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 use App\Models\AssetType;
 use Illuminate\Http\Request;
+use App\Traits\NotifiesUsers;
 
 class AssetTypeController extends Controller
 {
+    use NotifiesUsers;
+
     public function index()
     {
         $assetTypes = AssetType::orderBy('name')->get();
@@ -23,7 +26,8 @@ class AssetTypeController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        AssetType::create($validated);
+        $assetType = AssetType::create($validated);
+        $this->notifyAllUsers('Asset Category', $assetType->name);
 
         return redirect()->route('manager.asset-types.index')->with('success', 'Asset type created successfully.');
     }
@@ -38,6 +42,7 @@ class AssetTypeController extends Controller
         ]);
 
         $assetType->update($validated);
+        $this->notifyAllUsers('Asset Category Update', $assetType->name);
 
         return redirect()->route('manager.asset-types.index')->with('success', 'Asset type updated successfully.');
     }

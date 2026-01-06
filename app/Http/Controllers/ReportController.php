@@ -64,13 +64,16 @@ class ReportController extends Controller
 
     protected function notifyManager($type, $filename)
     {
-        $notifyEmail = Setting::get('manager_notification_email');
-        if ($notifyEmail) {
-            try {
-                Mail::to($notifyEmail)->send(new ReportNotificationMail(Auth::user(), $type, $filename));
-            } catch (\Exception $e) {
-                report($e);
-            }
+        $user = Auth::user();
+        $managers = \App\Models\User::whereIn('role', ['admin', 'manager'])->pluck('email')->toArray();
+        
+        // Include the user who generated the report
+        $recipients = array_unique(array_merge($managers, [$user->email]));
+
+        try {
+            Mail::to($recipients)->send(new ReportNotificationMail($user, $type, $filename));
+        } catch (\Exception $e) {
+            report($e);
         }
     }
 }
