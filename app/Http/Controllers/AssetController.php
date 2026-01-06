@@ -76,8 +76,7 @@ class AssetController extends Controller
             'location_department' => 'nullable|string',
             'handed_over_to' => 'nullable|string',
             'handed_over_by' => 'nullable|string',
-            'assigned_by' => 'nullable|string',
-            'assigned_date' => 'nullable|date',
+            'handover_date' => 'nullable|date',
             'photo' => 'nullable|image|max:2048', // 2MB Max
             'documents.*' => 'nullable|file|max:10240', // 10MB Max per file
         ]);
@@ -156,8 +155,7 @@ class AssetController extends Controller
             'location_department' => 'nullable|string',
             'handed_over_to' => 'nullable|string',
             'handed_over_by' => 'nullable|string',
-            'assigned_by' => 'nullable|string',
-            'assigned_date' => 'nullable|date',
+            'handover_date' => 'nullable|date',
             'photo' => 'nullable|image|max:2048',
         ]);
 

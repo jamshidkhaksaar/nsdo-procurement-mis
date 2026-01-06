@@ -102,24 +102,23 @@
                         </div>
 
                         <div>
-                            <label for="staff_id" class="block text-sm font-medium text-gray-700">Assigned Staff</label>
+                            <label for="handed_over_by" class="block text-sm font-medium text-gray-700">Handed Over By</label>
+                            <input type="text" name="handed_over_by" id="handed_over_by" value="{{ old('handed_over_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Name or Title">
+                        </div>
+
+                        <div>
+                            <label for="handover_date" class="block text-sm font-medium text-gray-700">Handover Date</label>
+                            <input type="date" name="handover_date" id="handover_date" value="{{ old('handover_date', date('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label for="staff_id" class="block text-sm font-medium text-gray-700">Received By (Staff Member)</label>
                             <select name="staff_id" id="staff_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="">Select Staff</option>
                                 @foreach($staffMembers as $staff)
                                     <option value="{{ $staff->id }}" {{ old('staff_id') == $staff->id ? 'selected' : '' }}>{{ $staff->name }} ({{ $staff->department->name ?? 'N/A' }})</option>
                                 @endforeach
                             </select>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="assigned_by" class="block text-sm font-medium text-gray-700">Assigned By (Whom)</label>
-                                <input type="text" name="assigned_by" id="assigned_by" value="{{ old('assigned_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Name or Title">
-                            </div>
-                            <div>
-                                <label for="assigned_date" class="block text-sm font-medium text-gray-700">Assigned Date</label>
-                                <input type="date" name="assigned_date" id="assigned_date" value="{{ old('assigned_date', date('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
                         </div>
 
                         <div>

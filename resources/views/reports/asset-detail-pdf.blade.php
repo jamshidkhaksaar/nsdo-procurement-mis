@@ -102,19 +102,15 @@
     </div>
 
     <div class="section">
-        <div class="section-title">Handover & Assignment Details</div>
+        <div class="section-title">Handover Details</div>
         <table style="border: none;">
             <tr>
                 <td class="label" style="border: none;">Handed Over By:</td>
                 <td class="value" style="border: none;">{{ $asset->handed_over_by ?? 'Logistics Officer' }}</td>
             </tr>
             <tr>
-                <td class="label" style="border: none;">Assigned By:</td>
-                <td class="value" style="border: none;">{{ $asset->assigned_by ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <td class="label" style="border: none;">Assignment Date:</td>
-                <td class="value" style="border: none;">{{ $asset->assigned_date ? $asset->assigned_date->format('Y-m-d') : 'N/A' }}</td>
+                <td class="label" style="border: none;">Handover Date:</td>
+                <td class="value" style="border: none;">{{ $asset->handover_date ? $asset->handover_date->format('Y-m-d') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="label" style="border: none;">Received By (Staff):</td>
