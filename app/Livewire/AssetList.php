@@ -15,6 +15,7 @@ class AssetList extends Component
     public $search = '';
     public $project_id = '';
     public $condition = '';
+    public $perPage = 50;
 
     public $selectedAsset = null;
     public $showModal = false;
@@ -39,7 +40,7 @@ class AssetList extends Component
 
     public function render()
     {
-        $query = Asset::with(['project', 'creator', 'editor']);
+        $query = Asset::with(['project', 'creator', 'editor', 'assetType'])->withCount('documents');
 
         if ($this->project_id) {
             $query->where('project_id', $this->project_id);
@@ -58,7 +59,7 @@ class AssetList extends Component
         }
 
         return view('livewire.asset-list', [
-            'assets' => $query->latest()->paginate(10),
+            'assets' => $query->latest()->paginate($this->perPage),
             'projects' => Project::all(),
         ]);
     }

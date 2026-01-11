@@ -15,9 +15,12 @@ class Asset extends Model implements Auditable
         'project_id',
         'asset_type_id',
         'asset_tag',
+        'serial_number',
         'name',
         'description',
         'quantity',
+        'useful_life_years',
+        'purchase_date',
         'condition',
         'province_id',
         'department_id',
@@ -75,5 +78,26 @@ class Asset extends Model implements Auditable
 
     protected $casts = [
         'handover_date' => 'date',
+        'purchase_date' => 'date',
+        'useful_life_years' => 'decimal:2',
     ];
+
+    public function getRemainingLifeAttribute()
+    {
+        if (!$this->purchase_date || !$this->useful_life_years) {
+            return 'N/A';
+        }
+
+        // useful_life_years is a decimal, convert to months for precision or just add years
+        $years = (int) $this->useful_life_years;
+        $months = (int) (($this->useful_life_years - $years) * 12);
+
+        $expiryDate = $this->purchase_date->copy()->addYears($years)->addMonths($months);
+        
+        if ($expiryDate->isPast()) {
+            return 'Expired ' . $expiryDate->diffForHumans();
+        }
+
+        return $expiryDate->diffForHumans(null, true) . ' left';
+    }
 }

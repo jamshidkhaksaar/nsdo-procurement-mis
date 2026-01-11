@@ -47,14 +47,31 @@
                             </select>
                         </div>
 
-                        <div>
-                            <label for="asset_tag" class="block text-sm font-medium text-gray-700">Asset Tag / Serial No <span class="text-red-500">*</span></label>
-                            <input type="text" name="asset_tag" id="asset_tag" value="{{ old('asset_tag', $asset->asset_tag) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="asset_tag" class="block text-sm font-medium text-gray-700">Asset Tag <span class="text-red-500">*</span></label>
+                                <input type="text" name="asset_tag" id="asset_tag" value="{{ old('asset_tag', $asset->asset_tag) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="serial_number" class="block text-sm font-medium text-gray-700">Serial Number</label>
+                                <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number', $asset->serial_number) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
                         </div>
 
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Asset Name <span class="text-red-500">*</span></label>
                             <input type="text" name="name" id="name" value="{{ old('name', $asset->name) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="purchase_date" class="block text-sm font-medium text-gray-700">Purchase Date</label>
+                                <input type="date" name="purchase_date" id="purchase_date" value="{{ old('purchase_date', $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="useful_life_years" class="block text-sm font-medium text-gray-700">Useful Life (Years)</label>
+                                <input type="number" step="0.1" name="useful_life_years" id="useful_life_years" value="{{ old('useful_life_years', $asset->useful_life_years) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -95,7 +112,7 @@
                         </div>
 
                         <div>
-                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
+                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department / Location</label>
                             <select name="department_id" id="department_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="">Select Department</option>
                                 @foreach($departments as $dept)

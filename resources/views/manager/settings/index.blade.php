@@ -53,25 +53,6 @@
             </a>
         </div>
 
-        <!-- General Settings Form -->
-        <div class="bg-white overflow-hidden shadow sm:rounded-lg max-w-2xl">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Notification Settings</h3>
-                <form action="{{ route('manager.settings.update') }}" method="POST">
-                    @csrf
-                    <div class="mb-6">
-                        <label for="manager_email" class="block text-sm font-medium text-gray-700">Manager Notification Email</label>
-                        <p class="text-xs text-gray-500 mb-2">Email for receiving automated reports and alerts.</p>
-                        <input type="email" name="manager_email" id="manager_email" value="{{ $settings['manager_email'] ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm transition">
-                            Save Email Settings
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <!-- General Settings Form (Removed as per request) -->
     </div>
 </x-app-layout>

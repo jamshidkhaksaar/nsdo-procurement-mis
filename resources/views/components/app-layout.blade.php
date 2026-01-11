@@ -26,7 +26,7 @@
 <body class="bg-gray-100 font-sans antialiased">
     <div class="min-h-screen">
         <!-- Navbar -->
-        <nav class="bg-white border-b border-gray-200 sticky top-0 z-[40] shadow-sm">
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
@@ -183,6 +183,24 @@
             </div>
         </main>
     </div>
+
+    <!-- Scroll to Top Button -->
+    <div x-data="{ showScrollTop: false }"
+         @scroll.window="showScrollTop = (window.pageYOffset > 300) ? true : false"
+         class="fixed bottom-10 right-10 z-50">
+        <button x-show="showScrollTop"
+                @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-10"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 translate-y-10"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg focus:outline-none transition transform hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+        </button>
+    </div>
+
     @livewireScripts
 </body>
 </html>

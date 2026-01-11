@@ -21,8 +21,7 @@ class AssetTypeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:asset_types',
-            'useful_life_years' => 'required|integer|min:1',
-            'depreciation_method' => 'required|string',
+            'category' => 'nullable|string|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -36,8 +35,7 @@ class AssetTypeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:asset_types,name,' . $assetType->id,
-            'useful_life_years' => 'required|integer|min:1',
-            'depreciation_method' => 'required|string',
+            'category' => 'nullable|string|max:255',
             'description' => 'nullable|string',
         ]);
 

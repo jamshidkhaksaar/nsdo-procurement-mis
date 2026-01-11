@@ -70,10 +70,29 @@
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Asset Type</label>
                                     <p class="text-gray-900 font-medium">{{ $asset->assetType->name ?? 'Uncategorized' }}</p>
+                                    @if($asset->assetType && $asset->assetType->category)
+                                        <p class="text-xs text-gray-500">Category: {{ $asset->assetType->category }}</p>
+                                    @endif
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Project Assignment</label>
                                     <p class="text-gray-900 font-medium">{{ $asset->project->name }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Serial Number</label>
+                                    <p class="text-gray-900 font-medium font-mono">{{ $asset->serial_number ?? 'N/A' }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Depreciation & Lifecycle</label>
+                                    <div class="mt-1 space-y-1">
+                                        <p class="text-sm text-gray-900">Purchase: <span class="font-medium">{{ $asset->purchase_date ? $asset->purchase_date->format('M d, Y') : 'N/A' }}</span></p>
+                                        <p class="text-sm text-gray-900">Useful Life: <span class="font-medium">{{ $asset->useful_life_years ? $asset->useful_life_years . ' Years' : 'N/A' }}</span></p>
+                                        @if($asset->purchase_date && $asset->useful_life_years)
+                                            <p class="text-sm font-bold {{ str_contains($asset->remaining_life, 'Expired') ? 'text-red-600' : 'text-green-600' }}">
+                                                Time Left: {{ $asset->remaining_life }}
+                                            </p>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Quantity</label>

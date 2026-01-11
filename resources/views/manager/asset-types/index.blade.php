@@ -18,15 +18,8 @@
                             <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g. Laptop">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Useful Life (Years)</label>
-                            <input type="number" name="useful_life_years" value="5" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Depreciation Method</label>
-                            <select name="depreciation_method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                <option value="straight_line">Straight Line</option>
-                                <option value="reducing_balance">Reducing Balance</option>
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700">Category (Optional)</label>
+                            <input type="text" name="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g. IT Equipment">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Description</label>
@@ -49,8 +42,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Useful Life</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -58,8 +50,7 @@
                         @foreach($assetTypes as $type)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $type->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $type->useful_life_years }} Years</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst(str_replace('_', ' ', $type->depreciation_method)) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $type->category ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <form action="{{ route('manager.asset-types.destroy', $type) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                                         @csrf @method('DELETE')

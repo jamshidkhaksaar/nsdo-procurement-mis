@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AssetType extends Model
 {
-    protected $fillable = ['name', 'useful_life_years', 'depreciation_method', 'description'];
+    protected $fillable = ['name', 'category', 'description'];
 
     public function assets()
     {

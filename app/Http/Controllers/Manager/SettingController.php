@@ -18,14 +18,7 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'manager_email' => 'nullable|email|max:255',
-        ]);
-
-        if ($request->has('manager_email')) {
-            Setting::set('manager_email', $request->manager_email);
-        }
-
+        // No settings to update currently.
         return redirect()->route('manager.settings.index')->with('success', 'Manager settings updated successfully.');
     }
 }
