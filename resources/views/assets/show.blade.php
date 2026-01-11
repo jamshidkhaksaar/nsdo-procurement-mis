@@ -103,12 +103,20 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handedover to</label>
-                                    <p class="text-indigo-700 font-bold text-lg">{{ $asset->staff->name ?? $asset->handed_over_to ?? 'Not Assigned' }}</p>
+                                    @if($asset->staff_id || $asset->handed_over_to)
+                                        <p class="text-indigo-700 font-bold text-lg">{{ $asset->staff->name ?? $asset->handed_over_to }}</p>
+                                    @else
+                                        <p class="text-gray-500 font-bold text-lg italic">In Stock / Not Handed Over</p>
+                                    @endif
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handover Record</label>
-                                    <p class="text-gray-900 font-medium">Handed over by: {{ $asset->handed_over_by ?? 'Logistics' }}</p>
-                                    <p class="text-gray-500 text-xs mt-1">Date: {{ $asset->handover_date ? $asset->handover_date->format('M d, Y') : 'N/A' }}</p>
+                                    @if($asset->staff_id || $asset->handed_over_to)
+                                        <p class="text-gray-900 font-medium">Handed over by: {{ $asset->handed_over_by ?? 'Logistics' }}</p>
+                                        <p class="text-gray-500 text-xs mt-1">Date: {{ $asset->handover_date ? $asset->handover_date->format('M d, Y') : 'N/A' }}</p>
+                                    @else
+                                        <p class="text-gray-500 font-medium italic">Asset currently in Stock</p>
+                                    @endif
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Current Location</label>
