@@ -6,7 +6,7 @@
     <title>{{ \App\Models\Setting::get('company_name', 'Procurement MIS') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/background.jpg');">
+<body class="antialiased min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/background.png');">
     <div class="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
         <div class="mb-6 flex justify-center">
             @php
