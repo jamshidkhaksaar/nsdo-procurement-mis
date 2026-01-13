@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="bg-gray-100 antialiased min-h-screen flex items-center justify-center p-4">
+<body class="antialiased min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/background.jpg');">
     <div class="max-w-md w-full bg-white shadow-xl rounded-xl overflow-hidden">
         <div class="p-8">
             <div class="flex justify-center mb-8">
