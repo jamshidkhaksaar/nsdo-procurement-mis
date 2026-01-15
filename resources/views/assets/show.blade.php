@@ -8,15 +8,15 @@
                 <p class="text-sm text-gray-500 mt-1">Detailed specification and tracking record</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                @if($asset->condition !== 'Broken')
-                    <form action="{{ route('assets.mark-damaged', $asset) }}" method="POST" onsubmit="return confirm('Are you sure this asset is damaged/broken?')">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 transition">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 15c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            Mark as Damaged
-                        </button>
-                    </form>
-                @endif
+            @if($asset->condition !== 'Scrap')
+                <form action="{{ route('assets.mark-damaged', $asset) }}" method="POST" onsubmit="return confirm('Are you sure this asset is damaged/broken?')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 transition">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 15c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Mark as Damaged
+                    </button>
+                </form>
+            @endif
                 <a href="{{ route('assets.export-pdf', $asset) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 transition">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Export PDF
@@ -35,24 +35,10 @@
         <!-- Main Info Card -->
         <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
             <div class="p-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     
-                    <!-- Left: Photo -->
+                    <!-- Left: Details -->
                     <div class="lg:col-span-1">
-                        <div class="bg-gray-50 rounded-2xl p-4 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center min-h-[300px]">
-                            @if($asset->photo_path)
-                                <img src="{{ Storage::url($asset->photo_path) }}" alt="{{ $asset->name }}" class="max-w-full max-h-[400px] rounded-xl shadow-lg object-contain bg-white">
-                            @else
-                                <div class="text-gray-300 flex flex-col items-center">
-                                    <svg class="w-24 h-24 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <p class="font-medium">No Image Uploaded</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Right: Details -->
-                    <div class="lg:col-span-2">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-2xl font-bold text-gray-900">{{ $asset->name }}</h3>
                             <span class="px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wide
@@ -65,75 +51,87 @@
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Asset Type</label>
-                                    <p class="text-gray-900 font-medium">{{ $asset->assetType->name ?? 'Uncategorized' }}</p>
-                                    @if($asset->assetType && $asset->assetType->category)
-                                        <p class="text-xs text-gray-500">Category: {{ $asset->assetType->category }}</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Asset Type</label>
+                                <p class="text-gray-900 font-medium">{{ $asset->assetType->name ?? 'Uncategorized' }}</p>
+                                @if($asset->assetType && $asset->assetType->category)
+                                    <p class="text-xs text-gray-500">Category: {{ $asset->assetType->category }}</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Project Assignment</label>
+                                <p class="text-gray-900 font-medium">{{ $asset->project->name }}</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Supplier</label>
+                                <p class="text-gray-900 font-medium">{{ $asset->supplier->name ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Serial Number</label>
+                                <p class="text-gray-900 font-medium font-mono">{{ $asset->serial_number ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Depreciation & Lifecycle</label>
+                                <div class="mt-1 space-y-1">
+                                    <p class="text-sm text-gray-900">Purchase: <span class="font-medium">{{ $asset->purchase_date ? $asset->purchase_date->format('M d, Y') : 'N/A' }}</span></p>
+                                    <p class="text-sm text-gray-900">Delivery: <span class="font-medium">{{ $asset->delivery_date ? $asset->delivery_date->format('M d, Y') : 'N/A' }}</span></p>
+                                    <p class="text-sm text-gray-900">GR Date: <span class="font-medium">{{ $asset->gr_date ? $asset->gr_date->format('M d, Y') : 'N/A' }}</span></p>
+                                    <p class="text-sm text-gray-900">Useful Life: <span class="font-medium">{{ $asset->useful_life_years ? $asset->useful_life_years . ' Years' : 'N/A' }}</span></p>
+                                    @if($asset->purchase_date && $asset->useful_life_years)
+                                        <p class="text-sm font-bold {{ str_contains($asset->remaining_life, 'Expired') ? 'text-red-600' : 'text-green-600' }}">
+                                            Time Left: {{ $asset->remaining_life }}
+                                        </p>
                                     @endif
                                 </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Project Assignment</label>
-                                    <p class="text-gray-900 font-medium">{{ $asset->project->name }}</p>
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Serial Number</label>
-                                    <p class="text-gray-900 font-medium font-mono">{{ $asset->serial_number ?? 'N/A' }}</p>
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Depreciation & Lifecycle</label>
-                                    <div class="mt-1 space-y-1">
-                                        <p class="text-sm text-gray-900">Purchase: <span class="font-medium">{{ $asset->purchase_date ? $asset->purchase_date->format('M d, Y') : 'N/A' }}</span></p>
-                                        <p class="text-sm text-gray-900">Useful Life: <span class="font-medium">{{ $asset->useful_life_years ? $asset->useful_life_years . ' Years' : 'N/A' }}</span></p>
-                                        @if($asset->purchase_date && $asset->useful_life_years)
-                                            <p class="text-sm font-bold {{ str_contains($asset->remaining_life, 'Expired') ? 'text-red-600' : 'text-green-600' }}">
-                                                Time Left: {{ $asset->remaining_life }}
-                                            </p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Quantity</label>
-                                    <p class="text-gray-900 font-medium">{{ $asset->quantity }} Unit(s)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Financials & Location -->
+                    <div class="lg:col-span-1">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Financial Details</label>
+                                <div class="mt-1 space-y-1 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <p class="text-sm text-gray-900">Unit Price: <span class="font-medium">{{ $asset->unit_price ? number_format($asset->unit_price, 2) . ' ' . $asset->currency : 'N/A' }}</span></p>
+                                    <p class="text-sm text-gray-900">Quantity: <span class="font-medium">{{ $asset->quantity }} Unit(s)</span></p>
+                                    <p class="text-sm text-gray-900 font-bold">Total Amount: <span class="font-bold text-indigo-600">{{ $asset->total_amount ? number_format($asset->total_amount, 2) . ' ' . $asset->currency : 'N/A' }}</span></p>
                                 </div>
                             </div>
 
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handedover to</label>
-                                    @if($asset->staff_id || $asset->handed_over_to)
-                                        <p class="text-indigo-700 font-bold text-lg">{{ $asset->staff->name ?? $asset->handed_over_to }}</p>
-                                    @else
-                                        <p class="text-gray-500 font-bold text-lg italic">In Stock / Not Handed Over</p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handover Record</label>
-                                    @if($asset->staff_id || $asset->handed_over_to)
-                                        <p class="text-gray-900 font-medium">Handed over by: {{ $asset->handed_over_by ?? 'Logistics' }}</p>
-                                        <p class="text-gray-500 text-xs mt-1">Date: {{ $asset->handover_date ? $asset->handover_date->format('M d, Y') : 'N/A' }}</p>
-                                    @else
-                                        <p class="text-gray-500 font-medium italic">Asset currently in Stock</p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Current Location</label>
-                                    <p class="text-gray-900 font-medium">
-                                        {{ $asset->province->name ?? $asset->location_province ?? 'N/A' }} / 
-                                        {{ $asset->department->name ?? $asset->location_department ?? 'N/A' }}
-                                        @if($asset->room_number) (Room: {{ $asset->room_number }}) @endif
-                                    </p>
-                                </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Take over by</label>
+                                @if($asset->staff_id || $asset->handed_over_to)
+                                    <p class="text-indigo-700 font-bold text-lg">{{ $asset->staff->name ?? $asset->handed_over_to }}</p>
+                                @else
+                                    <p class="text-gray-500 font-bold text-lg italic">In Stock / Not Handed Over</p>
+                                @endif
                             </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Handover Record</label>
+                                @if($asset->staff_id || $asset->handed_over_to)
+                                    <p class="text-gray-900 font-medium">Handed over by: {{ $asset->handed_over_by ?? 'Logistics' }}</p>
+                                    <p class="text-gray-500 text-xs mt-1">Date: {{ $asset->handover_date ? $asset->handover_date->format('M d, Y') : 'N/A' }}</p>
+                                @else
+                                    <p class="text-gray-500 font-medium italic">Asset currently in Stock</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Current Location</label>
+                                <p class="text-gray-900 font-medium">
+                                    {{ $asset->province->name ?? $asset->location_province ?? 'N/A' }} / 
+                                    {{ $asset->department->name ?? $asset->location_department ?? 'N/A' }}
+                                    @if($asset->room_number) (Room: {{ $asset->room_number }}) @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                            <div class="col-span-full pt-4 border-t">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Specifications / Description</label>
-                                <div class="bg-gray-50 p-4 rounded-xl text-gray-700 leading-relaxed border border-gray-100">
-                                    {{ $asset->description ?: 'No additional specifications provided.' }}
-                                </div>
-                            </div>
+                    <div class="col-span-full pt-4 border-t">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Specifications / Description</label>
+                        <div class="bg-gray-50 p-4 rounded-xl text-gray-700 leading-relaxed border border-gray-100">
+                            {{ $asset->description ?: 'No additional specifications provided.' }}
                         </div>
                     </div>
                 </div>

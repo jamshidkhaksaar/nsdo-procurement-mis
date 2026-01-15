@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('provinces', App\Http\Controllers\Manager\ProvinceController::class);
             Route::resource('departments', App\Http\Controllers\Manager\DepartmentController::class);
             Route::resource('staff', App\Http\Controllers\Manager\StaffController::class);
+            Route::resource('suppliers', App\Http\Controllers\Manager\SupplierController::class);
         });
     });
 });

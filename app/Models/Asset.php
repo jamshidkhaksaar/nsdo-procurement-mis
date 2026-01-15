@@ -14,6 +14,7 @@ class Asset extends Model implements Auditable
     protected $fillable = [
         'project_id',
         'asset_type_id',
+        'supplier_id',
         'asset_tag',
         'serial_number',
         'name',
@@ -21,7 +22,12 @@ class Asset extends Model implements Auditable
         'quantity',
         'useful_life_years',
         'purchase_date',
+        'delivery_date',
+        'gr_date',
         'condition',
+        'unit_price',
+        'currency',
+        'total_amount',
         'province_id',
         'department_id',
         'staff_id',
@@ -31,7 +37,6 @@ class Asset extends Model implements Auditable
         'handed_over_to',
         'handed_over_by',
         'handover_date',
-        'photo_path',
         'created_by',
         'updated_by'
     ];
@@ -39,6 +44,11 @@ class Asset extends Model implements Auditable
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function creator()
@@ -79,7 +89,11 @@ class Asset extends Model implements Auditable
     protected $casts = [
         'handover_date' => 'date',
         'purchase_date' => 'date',
+        'delivery_date' => 'date',
+        'gr_date' => 'date',
         'useful_life_years' => 'decimal:2',
+        'unit_price' => 'decimal:2',
+        'total_amount' => 'decimal:2',
     ];
 
     public function getRemainingLifeAttribute()

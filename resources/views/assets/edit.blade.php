@@ -4,8 +4,8 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Asset') }}: {{ $asset->name }}
             </h2>
-            @if($asset->condition !== 'Broken')
-                <button type="button" onclick="document.getElementById('condition').value = 'Broken'; document.getElementById('condition').classList.add('bg-red-100', 'text-red-900'); alert('Condition set to Broken. Please click Update Asset to save.');" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow text-sm">
+            @if($asset->condition !== 'Scrap')
+                <button type="button" onclick="document.getElementById('condition').value = 'Scrap'; document.getElementById('condition').classList.add('bg-red-100', 'text-red-900'); alert('Condition set to Scrap. Please click Update Asset to save.');" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow text-sm">
                     Mark as Damaged
                 </button>
             @endif
@@ -86,8 +86,48 @@
                                     <option value="Good" {{ old('condition', $asset->condition) == 'Good' ? 'selected' : '' }}>Good</option>
                                     <option value="Fair" {{ old('condition', $asset->condition) == 'Fair' ? 'selected' : '' }}>Fair</option>
                                     <option value="Poor" {{ old('condition', $asset->condition) == 'Poor' ? 'selected' : '' }}>Poor</option>
-                                    <option value="Broken" {{ old('condition', $asset->condition) == 'Broken' ? 'selected' : '' }}>Broken</option>
+                                    <option value="Scrap" {{ old('condition', $asset->condition) == 'Scrap' ? 'selected' : '' }}>Scrap</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="supplier_name" class="block text-sm font-medium text-gray-700">Supplier Name</label>
+                            <input type="text" list="suppliers_list" name="supplier_name" id="supplier_name" value="{{ old('supplier_name', $asset->supplier->name ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Search or type new supplier...">
+                            <datalist id="suppliers_list">
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{ $supplier->name }}">
+                                @endforeach
+                            </datalist>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="delivery_date" class="block text-sm font-medium text-gray-700">Delivery Date</label>
+                                <input type="date" name="delivery_date" id="delivery_date" value="{{ old('delivery_date', $asset->delivery_date ? $asset->delivery_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="gr_date" class="block text-sm font-medium text-gray-700">GR Date</label>
+                                <input type="date" name="gr_date" id="gr_date" value="{{ old('gr_date', $asset->gr_date ? $asset->gr_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="unit_price" class="block text-sm font-medium text-gray-700">Unit Price</label>
+                                <input type="number" step="0.01" name="unit_price" id="unit_price" value="{{ old('unit_price', $asset->unit_price) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
+                                <select name="currency" id="currency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <option value="AFN" {{ old('currency', $asset->currency) == 'AFN' ? 'selected' : '' }}>AFN</option>
+                                    <option value="USD" {{ old('currency', $asset->currency) == 'USD' ? 'selected' : '' }}>USD</option>
+                                    <option value="EURO" {{ old('currency', $asset->currency) == 'EURO' ? 'selected' : '' }}>EURO</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="total_amount" class="block text-sm font-medium text-gray-700">Total Amount</label>
+                                <input type="number" step="0.01" name="total_amount" id="total_amount" value="{{ old('total_amount', $asset->total_amount) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
 
@@ -137,18 +177,13 @@
                         </div>
 
                         <div>
-                            <label for="staff_id" class="block text-sm font-medium text-gray-700">Handedover to (Staff Member)</label>
+                            <label for="staff_id" class="block text-sm font-medium text-gray-700">Take over by (Staff Member)</label>
                             <select name="staff_id" id="staff_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="">Select Staff</option>
                                 @foreach($staffMembers as $staff)
                                     <option value="{{ $staff->id }}" {{ old('staff_id', $asset->staff_id) == $staff->id ? 'selected' : '' }}>{{ $staff->name }} ({{ $staff->department->name ?? 'N/A' }})</option>
                                 @endforeach
                             </select>
-                        </div>
-
-                        <div>
-                            <label for="photo" class="block text-sm font-medium text-gray-700">Change Asset Photo</label>
-                            <input type="file" name="photo" id="photo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                         </div>
 
                         <div>

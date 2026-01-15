@@ -37,13 +37,7 @@
         <div>Asset Specification Sheet</div>
     </div>
 
-    @if($asset->photo_path && file_exists(storage_path('app/public/' . $asset->photo_path)))
-        <div style="text-align: center;">
-            <div class="photo-container">
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $asset->photo_path))) }}" class="photo">
-            </div>
-        </div>
-    @endif
+    <!-- Photo Removed as per request -->
 
     <div class="section">
         <div class="section-title">General Information</div>
@@ -65,6 +59,10 @@
                 <td class="value">{{ $asset->project->name ?? 'N/A' }}</td>
             </tr>
             <tr>
+                <td class="label">Supplier:</td>
+                <td class="value">{{ $asset->supplier->name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
                 <td class="label">Condition:</td>
                 <td class="value">{{ $asset->condition }}</td>
             </tr>
@@ -75,6 +73,36 @@
             <tr>
                 <td class="label">Description:</td>
                 <td class="value">{{ $asset->description ?? 'No description provided.' }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Financial & Dates</div>
+        <table>
+            <tr>
+                <td class="label">Purchase Date:</td>
+                <td class="value">{{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Delivery Date:</td>
+                <td class="value">{{ $asset->delivery_date ? $asset->delivery_date->format('Y-m-d') : 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">GR Date:</td>
+                <td class="value">{{ $asset->gr_date ? $asset->gr_date->format('Y-m-d') : 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Unit Price:</td>
+                <td class="value">{{ $asset->unit_price ? number_format($asset->unit_price, 2) . ' ' . $asset->currency : 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Total Amount:</td>
+                <td class="value"><strong>{{ $asset->total_amount ? number_format($asset->total_amount, 2) . ' ' . $asset->currency : 'N/A' }}</strong></td>
+            </tr>
+            <tr>
+                <td class="label">Useful Life:</td>
+                <td class="value">{{ $asset->useful_life_years ? $asset->useful_life_years . ' Years' : 'N/A' }}</td>
             </tr>
         </table>
     </div>
@@ -113,7 +141,7 @@
                 <td class="value" style="border: none;">{{ $asset->handover_date ? $asset->handover_date->format('Y-m-d') : 'N/A' }}</td>
             </tr>
             <tr>
-                <td class="label" style="border: none;">Handedover to:</td>
+                <td class="label" style="border: none;">Take over by:</td>
                 <td class="value" style="border: none;">{{ $asset->staff->name ?? $asset->handed_over_to ?? 'N/A' }}</td>
             </tr>
         </table>
@@ -131,7 +159,7 @@
                 <td style="width: 10%; border: none;"></td>
                 <td style="width: 45%; border: none; text-align: center; padding-top: 20px;">
                     <div style="border-top: 1px solid #000; padding-top: 5px;">
-                        <strong>Received By</strong><br>
+                        <strong>Take over by</strong><br>
                         <span style="font-size: 10px;">(Signature & Date)</span>
                     </div>
                 </td>

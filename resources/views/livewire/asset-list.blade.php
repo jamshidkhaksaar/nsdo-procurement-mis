@@ -1,4 +1,4 @@
-<div class="space-y-6" wire:poll.10s x-data="{ showImage: false, imageUrl: '' }">
+<div class="space-y-6" wire:poll.10s>
     <!-- Filter Card -->
     <div class="bg-white shadow-sm sm:rounded-lg p-4 border border-gray-100">
         <div class="flex flex-col md:flex-row gap-4 items-end">
@@ -21,7 +21,7 @@
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Condition</label>
                 <select wire:model.live="condition" class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     <option value="">Any Condition</option>
-                    @foreach(['New', 'Good', 'Fair', 'Poor', 'Broken'] as $cond)
+                    @foreach(['New', 'Good', 'Fair', 'Poor', 'Scrap'] as $cond)
                         <option value="{{ $cond }}">{{ $cond }}</option>
                     @endforeach
                 </select>
@@ -45,7 +45,6 @@
         </div>
     </div>
 
-    <!-- Assets Table -->
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -57,14 +56,13 @@
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lifecycle</th>
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Docs</th>
                         <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($assets as $asset)
-                        <tr wire:key="asset-{{ $asset->id }}" class="hover:bg-gray-50 transition {{ $asset->condition === 'Broken' ? 'bg-red-50' : '' }}">
+                        <tr wire:key="asset-{{ $asset->id }}" class="hover:bg-gray-50 transition {{ $asset->condition === 'Scrap' ? 'bg-red-50' : '' }}">
                             <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-indigo-600">
                                 {{ $asset->asset_tag }}
                                 @if($asset->serial_number)
@@ -110,18 +108,6 @@
                                 </span>
                             </td>
                             <td class="px-3 py-2 whitespace-nowrap text-center">
-                                @if($asset->photo_path)
-                                    <img src="{{ Storage::url($asset->photo_path) }}" 
-                                         alt="Asset Photo" 
-                                         class="h-8 w-8 rounded-full object-cover cursor-pointer hover:opacity-75 transition border border-gray-200 inline-block"
-                                         @click="imageUrl = '{{ Storage::url($asset->photo_path) }}'; showImage = true">
-                                @else
-                                    <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 inline-block">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-3 py-2 whitespace-nowrap text-center">
                                 @if($asset->documents_count > 0)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                         <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-2.828-6.828l-6.414 6.586a6 6 0 008.486 8.486L20.5 13"></path></svg>
@@ -135,8 +121,8 @@
                                 <div class="flex justify-end items-center space-x-3">
                                     <a href="{{ route('assets.show', $asset) }}" target="_blank" class="text-blue-600 hover:text-blue-900 font-bold">View</a>
                                     
-                                    @if($asset->condition !== 'Broken')
-                                        <form action="{{ route('assets.mark-damaged', $asset) }}" method="POST" onsubmit="return confirm('Mark as broken?')">
+                                    @if($asset->condition !== 'Scrap')
+                                        <form action="{{ route('assets.mark-damaged', $asset) }}" method="POST" onsubmit="return confirm('Mark as broken/scrap?')">
                                             @csrf
                                             <button type="submit" class="text-red-600 hover:text-red-900 font-bold">Damage</button>
                                         </form>
@@ -160,24 +146,6 @@
         </div>
         <div class="px-3 py-2 border-t">
             {{ $assets->links() }}
-        </div>
-    </div>
-
-    <!-- Image Modal -->
-    <div x-show="showImage" 
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         style="display: none;">
-        <div @click.away="showImage = false" class="relative max-w-4xl max-h-screen p-4">
-            <button @click="showImage = false" class="absolute -top-2 -right-2 bg-white rounded-full p-2 hover:bg-gray-100 text-gray-600 shadow-lg">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <img :src="imageUrl" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl" alt="Full size asset photo">
         </div>
     </div>
 </div>

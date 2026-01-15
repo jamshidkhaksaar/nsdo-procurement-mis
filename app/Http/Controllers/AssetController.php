@@ -9,6 +9,7 @@ use App\Models\AssetType;
 use App\Models\Province;
 use App\Models\Department;
 use App\Models\Staff;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,7 +20,7 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Asset::with(['project', 'creator', 'editor']);
+        $query = Asset::with(['project', 'creator', 'editor', 'supplier']);
 
         if ($request->filled('project_id')) {
             $query->where('project_id', $request->project_id);
@@ -51,8 +52,9 @@ class AssetController extends Controller
         $provinces = Province::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
         $staffMembers = Staff::orderBy('name')->get();
+        $suppliers = Supplier::orderBy('name')->get();
         
-        return view('assets.create', compact('projects', 'assetTypes', 'provinces', 'departments', 'staffMembers'));
+        return view('assets.create', compact('projects', 'assetTypes', 'provinces', 'departments', 'staffMembers', 'suppliers'));
     }
 
     /**
@@ -70,7 +72,13 @@ class AssetController extends Controller
             'quantity' => 'required|integer|min:1',
             'useful_life_years' => 'nullable|numeric|min:0',
             'purchase_date' => 'nullable|date',
-            'condition' => 'required|in:New,Good,Fair,Poor,Broken',
+            'delivery_date' => 'nullable|date',
+            'gr_date' => 'nullable|date',
+            'condition' => 'required|in:New,Good,Fair,Poor,Scrap',
+            'unit_price' => 'nullable|numeric|min:0',
+            'currency' => 'required|in:AFN,USD,EURO',
+            'total_amount' => 'nullable|numeric|min:0',
+            'supplier_name' => 'nullable|string|max:255',
             'province_id' => 'nullable|exists:provinces,id',
             'department_id' => 'nullable|exists:departments,id',
             'staff_id' => 'nullable|exists:staff,id',
@@ -80,15 +88,19 @@ class AssetController extends Controller
             'handed_over_to' => 'nullable|string',
             'handed_over_by' => 'nullable|string',
             'handover_date' => 'nullable|date',
-            'photo' => 'nullable|image|max:2048', // 2MB Max
             'documents.*' => 'nullable|file|max:10240', // 10MB Max per file
         ]);
 
-        // Handle Photo Upload
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('assets/photos', 'public');
-            $validated['photo_path'] = $path;
+        // Handle Dynamic Supplier
+        if ($request->filled('supplier_name')) {
+            $supplier = Supplier::firstOrCreate(
+                ['name' => $request->supplier_name],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
+            $validated['supplier_id'] = $supplier->id;
         }
+
+        unset($validated['supplier_name']); // Remove generic name field, we used it to get ID
 
         $asset = Asset::create($validated);
 
@@ -98,7 +110,7 @@ class AssetController extends Controller
                 $path = $file->store('assets/documents', 'public');
                 AssetDocument::create([
                     'asset_id' => $asset->id,
-                    'type' => 'generic', // Can be refined in UI to distinguish types
+                    'type' => 'generic', 
                     'file_path' => $path,
                     'uploaded_at' => now(),
                 ]);
@@ -114,7 +126,7 @@ class AssetController extends Controller
      */
     public function show(Request $request, Asset $asset)
     {
-        $asset->load(['project', 'documents', 'audits.user', 'assetType', 'province', 'department', 'staff', 'creator', 'editor']);
+        $asset->load(['project', 'documents', 'audits.user', 'assetType', 'province', 'department', 'staff', 'creator', 'editor', 'supplier']);
         
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json($asset);
@@ -133,8 +145,9 @@ class AssetController extends Controller
         $provinces = Province::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
         $staffMembers = Staff::orderBy('name')->get();
+        $suppliers = Supplier::orderBy('name')->get();
 
-        return view('assets.edit', compact('asset', 'projects', 'assetTypes', 'provinces', 'departments', 'staffMembers'));
+        return view('assets.edit', compact('asset', 'projects', 'assetTypes', 'provinces', 'departments', 'staffMembers', 'suppliers'));
     }
 
     /**
@@ -152,7 +165,13 @@ class AssetController extends Controller
             'quantity' => 'required|integer|min:1',
             'useful_life_years' => 'nullable|numeric|min:0',
             'purchase_date' => 'nullable|date',
-            'condition' => 'required|in:New,Good,Fair,Poor,Broken',
+            'delivery_date' => 'nullable|date',
+            'gr_date' => 'nullable|date',
+            'condition' => 'required|in:New,Good,Fair,Poor,Scrap',
+            'unit_price' => 'nullable|numeric|min:0',
+            'currency' => 'required|in:AFN,USD,EURO',
+            'total_amount' => 'nullable|numeric|min:0',
+            'supplier_name' => 'nullable|string|max:255',
             'province_id' => 'nullable|exists:provinces,id',
             'department_id' => 'nullable|exists:departments,id',
             'staff_id' => 'nullable|exists:staff,id',
@@ -162,17 +181,20 @@ class AssetController extends Controller
             'handed_over_to' => 'nullable|string',
             'handed_over_by' => 'nullable|string',
             'handover_date' => 'nullable|date',
-            'photo' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($asset->photo_path) {
-                Storage::disk('public')->delete($asset->photo_path);
-            }
-            $path = $request->file('photo')->store('assets/photos', 'public');
-            $validated['photo_path'] = $path;
+        // Handle Dynamic Supplier
+        if ($request->filled('supplier_name')) {
+            $supplier = Supplier::firstOrCreate(
+                ['name' => $request->supplier_name],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
+            $validated['supplier_id'] = $supplier->id;
+        } else {
+             $validated['supplier_id'] = null;
         }
+        
+        unset($validated['supplier_name']);
 
         $asset->update($validated);
 
@@ -199,10 +221,6 @@ class AssetController extends Controller
     public function destroy(Asset $asset)
     {
         // Delete associated files
-        if ($asset->photo_path) {
-            Storage::disk('public')->delete($asset->photo_path);
-        }
-        
         foreach($asset->documents as $doc) {
             Storage::disk('public')->delete($doc->file_path);
         }
@@ -282,7 +300,7 @@ class AssetController extends Controller
 
     public function markDamaged(Asset $asset)
     {
-        $asset->update(['condition' => 'Broken']);
-        return back()->with('success', 'Asset marked as Damaged (Broken).');
+        $asset->update(['condition' => 'Scrap']);
+        return back()->with('success', 'Asset marked as Damaged (Scrap).');
     }
 }

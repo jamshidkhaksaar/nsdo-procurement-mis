@@ -3,47 +3,19 @@
 This document provides comprehensive guidance for AI coding agents working on the Procurement MIS (Management Information System) project.
 
 ## Project Overview
-
-A Laravel 12 application for procurement and asset management with:
-- Livewire 3 for reactive UI components
-- TailwindCSS 4 for styling (via Vite)
-- Laravel Reverb for real-time broadcasting
-- Maatwebsite Excel for exports
-- DomPDF for PDF generation
-- Laravel Auditing for change tracking
+A Laravel 12 application for procurement/asset management using Livewire 3 (reactive UI), TailwindCSS 4 (Vite), Laravel Reverb (real-time), Excel/DomPDF (reporting), and Laravel Auditing.
 
 ## Project Structure
-
 ```
 app/
-├── Events/           # Broadcast events (ContractCreated, AssetDeleted, etc.)
-├── Exports/          # Excel export classes (Maatwebsite/Excel)
+├── Events/           # Broadcast events (ContractCreated, etc.)
 ├── Http/
-│   ├── Controllers/  # Main controllers
-│   │   ├── Admin/    # Admin-only controllers (users, settings, audits)
-│   │   ├── Auth/     # Authentication controllers
-│   │   └── Manager/  # Manager-only controllers (asset types, provinces)
-│   └── Middleware/   # Custom middleware
-├── Livewire/         # Livewire components
-├── Mail/             # Mailable classes
-├── Models/           # Eloquent models
-├── Observers/        # Model observers
-├── Providers/        # Service providers
-└── Traits/           # Reusable traits
-database/
-├── factories/        # Model factories
-├── migrations/       # Database migrations
-└── seeders/          # Database seeders
-resources/
-├── css/app.css       # TailwindCSS entry point
-├── js/app.js         # JavaScript entry point
-└── views/            # Blade templates
-routes/
-├── web.php           # Web routes
-└── console.php       # Artisan commands
+│   ├── Controllers/  # Resource controllers (Admin/, Manager/)
+│   └── Livewire/     # Reactive components
+├── Models/           # Eloquent models (Auditable)
 tests/
-├── Feature/          # Feature tests (extend Tests\TestCase)
-└── Unit/             # Unit tests (extend PHPUnit\Framework\TestCase)
+├── Feature/          # Integration tests (Tests\TestCase)
+└── Unit/             # Logic tests (PHPUnit\Framework\TestCase)
 ```
 
 ## Build, Test & Development Commands
@@ -51,110 +23,86 @@ tests/
 ### Setup & Development
 ```bash
 composer run setup          # Full setup: install deps, migrate, build assets
-composer run dev            # Run server, queue, logs, and Vite together
+composer run dev            # Run server, queue, logs, and Vite concurrently
 php artisan serve           # Backend only (http://localhost:8000)
-npm run dev                 # Vite dev server for hot-reload
+npm run dev                 # Vite dev server (hot-reload)
 npm run build               # Production asset build
 ```
 
-### Testing Commands
+### Testing Commands (CRITICAL)
+Always verify changes with tests.
 ```bash
 composer run test                           # Run all tests
 php artisan test                            # Run all tests
-php artisan test --filter=ContractTest      # Run single test class
-php artisan test --filter=test_method_name  # Run single test method
+php artisan test --filter=ContractTest      # Run a single test class
+php artisan test --filter=test_method_name  # Run a single test method
 php artisan test tests/Feature/ExampleTest.php  # Run specific file
 php artisan test --parallel                 # Run tests in parallel
 ```
 
-### Code Formatting
+### Code Quality
 ```bash
-vendor/bin/pint             # Format all PHP code with Laravel Pint
-vendor/bin/pint --test      # Check formatting without changes
+vendor/bin/pint             # Format all PHP code (Laravel Pint)
 vendor/bin/pint app/Models  # Format specific directory
-```
-
-### Useful Artisan Commands
-```bash
-php artisan make:model ModelName -mfc       # Model with migration, factory, controller
-php artisan make:livewire ComponentName     # Create Livewire component
-php artisan make:event EventName            # Create broadcast event
-php artisan make:observer ModelObserver     # Create model observer
-php artisan migrate:fresh --seed            # Reset database with seeds
-php artisan queue:listen --tries=1          # Process queued jobs
 ```
 
 ## Code Style Guidelines
 
-### Formatting Rules (see .editorconfig)
-- Indentation: 4 spaces (2 for YAML)
-- Line endings: LF (Unix-style)
-- Trim trailing whitespace
-- Insert final newline
-- Use Laravel Pint for PHP formatting
-
-### PHP & Naming Conventions
-- **Namespaces**: PSR-4, match folder structure (`App\Http\Controllers\Admin\UserController`)
-- **Classes**: StudlyCase (`ContractController`, `AssetExport`)
-- **Methods**: camelCase (`getStatusAttribute`, `viewContract`)
-- **Properties**: camelCase (`$selectedContract`, `$showModal`)
-- **Database columns**: snake_case (`vendor_name`, `contract_reference`)
-- **Route names**: dot notation (`contracts.index`, `admin.users.store`)
-- **Views**: dot notation matching folder structure (`contracts.create`, `livewire.contract-list`)
+### General PHP & Naming
+- **Standards**: PSR-12/PER. Use 4 spaces for indentation.
+- **Namespaces**: Match directory structure (PSR-4).
+- **Classes**: StudlyCase (`ContractController`).
+- **Methods/Properties**: camelCase (`getStatusAttribute`, `$validatedData`).
+- **Database**: snake_case columns (`signed_date`, `vendor_name`).
+- **Routes/Views**: dot.notation (`contracts.index`, `contracts.show`).
 
 ### Import Organization
-Order imports as follows:
-1. PHP built-in classes
-2. Laravel/Illuminate classes
+Sort imports by category:
+1. PHP core classes
+2. Laravel/Framework classes
 3. Third-party packages
-4. Application classes (App\...)
+4. App namespace classes
 
 ```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;           // Laravel core
-use Maatwebsite\Excel\Facades\Excel;   // Third-party
-use App\Models\Contract;                // Application
-use App\Exports\AssetExport;            // Application
+use Illuminate\Http\Request;
+use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\Contract;
 ```
 
 ### Controller Patterns
-- Use resource controllers with standard methods: `index`, `create`, `store`, `show`, `edit`, `update`, `destroy`
-- Validate input inline with `$request->validate([...])`
-- Use route model binding for single-resource operations
-- Return redirects with flash messages for success/error feedback
+- **Type Hinting**: Always type hint method arguments (`Request $request`, `Contract $contract`).
+- **Validation**: Validate inline using `$request->validate([...])`.
+- **Return**: Use `redirect()->route(...)->with('success', ...)` for mutations; `view(..., compact(...))` for reads.
+- **Resourceful**: Stick to standard `index`, `create`, `store`, `show`, `edit`, `update`, `destroy` methods.
 
 ```php
-public function store(Request $request)
+public function update(Request $request, Contract $contract)
 {
     $validated = $request->validate([
         'vendor_name' => 'required|string|max:255',
-        'contract_reference' => 'required|string|unique:contracts',
+        'expiry_date' => 'required|date|after:signed_date',
     ]);
-
-    Contract::create($validated);
-
+    
+    $contract->update($validated);
+    
     return redirect()->route('contracts.index')
-        ->with('success', 'Contract created successfully.');
+        ->with('success', 'Contract updated successfully.');
 }
 ```
 
 ### Model Patterns
-- Define `$fillable` for mass assignment protection
-- Use `$casts` for date and type casting
-- Define relationships with explicit return types
-- Use accessors for computed attributes (`getStatusAttribute`)
-- Implement `Auditable` interface for audit logging
+- **Mass Assignment**: Use `$fillable` (whitelist) rather than `$guarded`.
+- **Casting**: Define `$casts` for dates/booleans/enums (`'signed_date' => 'date'`).
+- **Auditing**: Implement `OwenIt\Auditing\Contracts\Auditable` and use the trait.
+- **Relationships**: Define methods with return types (`HasMany`, `BelongsTo`).
 
 ```php
 class Contract extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['vendor_name', 'signed_date', 'expiry_date'];
-    protected $casts = ['signed_date' => 'date', 'expiry_date' => 'date'];
+    protected $fillable = ['vendor_name', 'signed_date'];
+    protected $casts = ['signed_date' => 'date'];
 
     public function amendments(): HasMany
     {
@@ -163,83 +111,36 @@ class Contract extends Model implements Auditable
 }
 ```
 
-### Livewire Component Patterns
-- Use `WithPagination` trait for paginated lists
-- Use `#[On('event')]` attributes for event listeners
-- Public properties are automatically reactive
-- Return views from `render()` method with data array
-
-```php
-class ContractList extends Component
-{
-    use WithPagination;
-
-    public $search = '';
-    
-    #[On('echo:contracts,ContractCreated')]
-    public function refreshList() {}
-
-    public function render()
-    {
-        return view('livewire.contract-list', [
-            'contracts' => Contract::paginate(10),
-        ]);
-    }
-}
-```
+### Livewire Patterns
+- Use `#[On('event-name')]` attributes for listeners.
+- Use `WithPagination` trait for lists.
+- Keep `render()` simple, returning the view with data.
 
 ### Error Handling
-- Use try-catch for external services (mail, API calls)
-- Use `report($e)` to log exceptions without interrupting flow
-- Validate all user input at controller level
-- Use Laravel's built-in validation rules
+- **External Services**: Wrap in `try-catch`.
+- **Reporting**: Use `report($e)` to log exceptions without interrupting flow.
+- **Validation**: Allow Laravel's automatic validation exception handling to redirect back with errors.
+
+## Testing Guidelines
+- **Feature Tests**: Extend `Tests\TestCase`. Use `RefreshDatabase` trait.
+- **Naming**: `test_snake_case_description(): void`.
+- **Assertions**: Use specific assertions (`assertRedirect`, `assertViewHas`, `assertDatabaseHas`).
 
 ```php
-try {
-    Mail::to($users)->send(new NotificationMail());
-} catch (\Exception $e) {
-    report($e);  // Log error but continue execution
-}
-```
-
-### Testing Guidelines
-- Feature tests extend `Tests\TestCase` (has Laravel application)
-- Unit tests extend `PHPUnit\Framework\TestCase` (no Laravel)
-- Name test methods: `test_descriptive_action_name(): void`
-- Use `RefreshDatabase` trait for database tests
-- Test files must end with `Test.php`
-
-```php
-class ContractTest extends TestCase
+public function test_contract_can_be_created(): void
 {
-    use RefreshDatabase;
-
-    public function test_user_can_create_contract(): void
-    {
-        $response = $this->post('/contracts', [...]);
-        $response->assertRedirect('/contracts');
-    }
+    $response = $this->post(route('contracts.store'), [
+        'vendor_name' => 'Acme Corp',
+        'signed_date' => now(),
+    ]);
+    
+    $response->assertRedirect(route('contracts.index'));
+    $this->assertDatabaseHas('contracts', ['vendor_name' => 'Acme Corp']);
 }
 ```
 
-## Configuration & Security
-
-- Store secrets in `.env`, never commit them
-- Update `.env.example` when adding new config keys
-- Use `config('key')` or `env('KEY')` to access values
-- Test environment uses `DB_DATABASE=testing`
-- Do not commit `storage/` generated files
-
-## Routing Conventions
-
-- Public routes: no middleware
-- Auth routes: `middleware('auth')`
-- Admin routes: `middleware('can:isAdmin')` with `admin.` prefix
-- Manager routes: `middleware('can:isManager')` with `manager.` prefix
-- Use resource routes where applicable: `Route::resource('contracts', ContractController::class)`
-
-## Commit & PR Guidelines
-
-- Commits: short, descriptive messages ("Add contract expiry validation")
-- PRs: include summary, testing notes, screenshots for UI changes
-- Link related issues when available
+## Security & Configuration
+- Access config via `config('key')`.
+- Store secrets in `.env` (never commit).
+- Use `auth` middleware for protected routes.
+- Sanitize output is handled automatically by Blade `{{ }}`.
